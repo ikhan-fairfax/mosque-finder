@@ -1,17 +1,31 @@
 package com.example.scratch;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.google.common.collect.Lists;
 
-public class MainActivity extends Activity {
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
+
+public class MainActivity extends SherlockActivity {
     public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-
 
     /**
      * Called when the activity is first created.
@@ -22,36 +36,38 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
     }
 
-    public void sendMessage(View view) {
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-
-        intent.putExtra(EXTRA_MESSAGE, message);
-
-        startActivity(intent);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_activity_actions, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.action_search:
-//                openSearch();
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.find_mosque:
+                findMosque();
                 return true;
-            case R.id.action_settings:
-//                openSettings();
+
+            case R.id.add_mosque:
                 return true;
+
             default:
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(menuItem);
+        }
+    }
+
+    private void findMosque() {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Criteria criteria = new Criteria();
+            String provider = locationManager.getBestProvider(criteria, false);
+            Location location = locationManager.getLastKnownLocation(provider);
+            Toast.makeText(this, "Finding locations near " + location.getLongitude() + ", "+ location.getLatitude() , Toast.LENGTH_SHORT).show();
         }
 
+        GetMosquesTask getMosquesTask = new GetMosquesTask(this);
+        getMosquesTask.execute("http://10.1.1.5:8080/examples/mosque.json");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return true;
     }
 }

@@ -3,4 +3,12 @@
     <string name="app_name">Mosque Finder</string>
     <string name="action_search">Search</string>
     <string name="action_settings">Actions Settings</string>
+    <string name="add_item">Add</string>
+    <string name="reload_list">Reload</string>
+    <string name="about">About</string>
+    <string name="edit_item">Edit</string>
+    <string name="view_item">View</string>
+    <string name="add_mosque">Add</string>
+    <string name="find_mosque">Find</string>
+    <string name="image">Image</string>
 </resources>
